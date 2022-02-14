@@ -28,9 +28,6 @@ Restaurant app, where customers can order
 * Add mock data to our db.json for meals
 * List meals to the meals the page
 
-
-
-
 ### Events
 Overall: 
 I want to click the meals link and list the meals to the page.

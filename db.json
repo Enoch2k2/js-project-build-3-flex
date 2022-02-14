@@ -1,0 +1,16 @@
+{
+  "meals": [
+    {
+      "id": 1, 
+      "name": "Taco Supreme",
+      "description": "taco supreme description text",
+      "imageUrl": "https://www.thewholesomedish.com/wp-content/uploads/2019/06/The-Best-Classic-Tacos-550.jpg"
+    },
+    {
+      "id": 2,
+      "name": "Chimichunga",
+      "description": "chimichunga description text",
+      "imageUrl": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRDKRGaoFGgsibRMDf_Jx0s_6SH-0eu1sYvkg&usqp=CAU"
+    }
+  ]
+}
