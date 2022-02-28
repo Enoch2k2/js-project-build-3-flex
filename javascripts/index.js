@@ -1,10 +1,14 @@
 // This is for our javascript logic
 const baseUrl = 'http://localhost:3000'
 let meals = []
+let checkoutNum = 0;
+let cart = []
 
 // NODE GETTERS
 const mainDiv = () => document.getElementById("main");
 const mealsLink = () => document.getElementById("meals-link");
+const checkoutNumber = () => document.getElementById("checkout-number");
+const checkoutNumberDisplay = () => document.getElementById("checkout-number-display");
 
 // Functions
 const fetchmeals = () => {
@@ -40,6 +44,16 @@ const renderMeal = meal => {
 }
 
 // Event Handlers
+function addOrder(e) {
+  e.preventDefault();
+  cart.push(this);
+
+  checkoutNumber().style.display = 'inline-block';
+  checkoutNumberDisplay().innerText = cart.length;
+
+  
+}
+
 const renderMealsPage = (e) => {
   e.preventDefault();
 
@@ -64,7 +78,6 @@ const attachMealsLinkEvent = () => {
 // Helpers
 
 const createCard = (meal) => {
-  console.log(meal)
   const divCard = document.createElement('div');
   const divImage = document.createElement('div');
   const divCardContent = document.createElement('div');
@@ -87,6 +100,8 @@ const createCard = (meal) => {
   span.innerText = meal.name;
   pDescription.innerText = meal.description;
   link1.innerText = "Order";
+
+  link1.addEventListener('click', addOrder.bind(meal));
 
   divImage.appendChild(img);
   divImage.appendChild(span);
@@ -120,9 +135,14 @@ const resetMain = () => {
   mainDiv().innerHTML = "";
 }
 
+const hideCheckoutNumber = () => {
+  checkoutNumber().style.display = 'none';
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   fetchmeals();
   attachMealsLinkEvent();
+  hideCheckoutNumber();
 })
 
 

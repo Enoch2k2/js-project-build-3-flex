@@ -29,12 +29,12 @@ Restaurant app, where customers can order
 * List meals to the meals the page
 
 ### Events
-Overall: 
-I want to click the meals link and list the meals to the page.
+Overall: The user will click the meals page, let it populate and then be able to click on the order button to order a meal. When they click on the meal, it should show a number next to the checkout cart.
+
 
 3 question rule:
-When: On Page Load (aka: DOMContentLoaded) - x
+When: When the order button populates
 
-Cause: Click - x
+Cause: Click
 
-Effect: Change the header to Meal List and list out the meals inside of an unordered list as lis.
+Effect: If number isn't visible, we will unhide the counter showing the incremented number.
