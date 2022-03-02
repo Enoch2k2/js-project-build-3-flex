@@ -7,6 +7,7 @@ let cart = []
 // NODE GETTERS
 const mainDiv = () => document.getElementById("main");
 const mealsLink = () => document.getElementById("meals-link");
+const checkoutLink = () => document.getElementById("checkout-link");
 const checkoutNumber = () => document.getElementById("checkout-number");
 const checkoutNumberDisplay = () => document.getElementById("checkout-number-display");
 
@@ -17,6 +18,10 @@ const fetchmeals = () => {
     .then(data => {
       meals = data;
     })
+}
+
+const searchMeals = term => {
+  return meals.filter(meal => meal.name.toLowerCase().includes(term.toLowerCase()))
 }
 
 const renderMeals = () => {
@@ -46,12 +51,29 @@ const renderMeal = meal => {
 // Event Handlers
 function addOrder(e) {
   e.preventDefault();
-  cart.push(this);
+  let item = cart.find(item => item.id === this.id);
 
-  checkoutNumber().style.display = 'inline-block';
-  checkoutNumberDisplay().innerText = cart.length;
+  if(item) {
+    item.qty++
+  } else {
+    let newItem = {
+      ...this,
+      qty: 1
+    }
 
+    cart.push(newItem);
+  }
   
+  checkoutNumber().style.display = 'inline-block';
+  checkoutNumberDisplay().innerText = checkoutQuantity();
+}
+
+const checkoutQuantity = () => {
+  return cart.reduce((total, item) => total + item.qty, 0);
+}
+
+const checkoutTotal = () => {
+  return cart.reduce((total, item) => total + (item.qty * item.price), 0);
 }
 
 const renderMealsPage = (e) => {
@@ -70,9 +92,106 @@ const renderMealsPage = (e) => {
   renderMeals();
 }
 
+const renderCheckoutPage = (e) => {
+  e.preventDefault();
+  resetMain();
+  
+  const h3 = document.createElement('h3');
+  const table = document.createElement('table');
+  const thead = document.createElement('thead');
+  const tbody = document.createElement('tbody');
+  const theadRow = document.createElement('tr');
+  const thMealName = document.createElement('th');
+  const thPrice = document.createElement('th');
+  const thQty = document.createElement('th');
+  const thAddOne = document.createElement('th');
+  const thRemoveOne = document.createElement('th');
+  const thRemove = document.createElement('th');
+  const pTotal = document.createElement('p');
+  const checkoutBtn = document.createElement('button');
+
+  h3.className = "center-align"
+  table.className = "highlight responsive-table"
+  checkoutBtn.className = 'btn';
+
+  h3.style.marginTop = "10px";
+  h3.style.paddingTop = "10px";
+
+  h3.innerText = "Checkout"
+  thMealName.innerText = "Meal Name"
+  thPrice.innerText = "Price"
+  thQty.innerText = "Qty"
+  thAddOne.innerText = 'Add 1'
+  thRemoveOne.innerText = 'Remove 1'
+  thRemove.innerText = "Remove"
+  pTotal.innerText = `Total: $${checkoutTotal()}`
+  checkoutBtn.innerText = "Checkout"
+
+  theadRow.appendChild(thMealName)
+  theadRow.appendChild(thPrice)
+  theadRow.appendChild(thQty)
+  theadRow.appendChild(thAddOne)
+  theadRow.appendChild(thRemoveOne)
+  theadRow.appendChild(thRemove)
+
+  // for every meal we'll make a table row with table data
+  cart.forEach(meal => {
+    const tr = document.createElement('tr');
+    const mealName = document.createElement('td');
+    const price = document.createElement('td');
+    const qty = document.createElement('td');
+    const addOne = document.createElement('td');
+    const removeOne = document.createElement('td');
+    const addOneBtn = document.createElement('button');
+    const removeOneBtn = document.createElement('button');
+    const removeBtn = document.createElement('button');
+    const remove = document.createElement('td');
+
+    addOneBtn.className = 'btn';
+    removeOneBtn.className = 'btn';
+    removeBtn.className = 'btn';
+
+    addOneBtn.innerText = "add";
+    removeOneBtn.innerText = "subtract";
+    removeBtn.innerText = "remove";
+
+    mealName.innerText = meal.name;
+    price.innerText = `$${meal.price}`;
+    qty.innerText = meal.qty;
+
+    addOne.appendChild(addOneBtn);
+    removeOne.appendChild(removeOneBtn);
+    remove.appendChild(removeBtn);
+
+    tr.appendChild(mealName);
+    tr.appendChild(price);
+    tr.appendChild(qty);
+    tr.appendChild(addOne);
+    tr.appendChild(removeOne);
+    tr.appendChild(remove);
+
+    tbody.appendChild(tr);
+  })
+  
+  thead.appendChild(theadRow);
+  table.appendChild(thead);
+  table.appendChild(tbody);
+
+  mainDiv().appendChild(h3);
+  mainDiv().appendChild(table);
+  mainDiv().appendChild(pTotal);
+  mainDiv().appendChild(checkoutBtn);
+
+  //   <p class="right-align">Total: $2.98</p>
+}
+
 // Event Listeners
 const attachMealsLinkEvent = () => {
   mealsLink().addEventListener('click', renderMealsPage);
+}
+
+const attachCheckoutLinkEvent = () => {
+  checkoutLink().addEventListener('click', renderCheckoutPage);
 }
 
 // Helpers
@@ -85,6 +204,7 @@ const createCard = (meal) => {
   const img = document.createElement('img');
   const span = document.createElement('span');
   const pDescription = document.createElement('p')
+  const pPrice = document.createElement('p');
   const link1 = document.createElement('a');
 
   divCard.className = "card";
@@ -99,6 +219,7 @@ const createCard = (meal) => {
 
   span.innerText = meal.name;
   pDescription.innerText = meal.description;
+  pPrice.innerText = `$${meal.price}`;
   link1.innerText = "Order";
 
   link1.addEventListener('click', addOrder.bind(meal));
@@ -106,6 +227,7 @@ const createCard = (meal) => {
   divImage.appendChild(img);
   divImage.appendChild(span);
   divCardContent.appendChild(pDescription);
+  divCardContent.appendChild(pPrice);
   divCardAction.appendChild(link1);
 
   divCard.appendChild(divImage);
@@ -142,6 +264,7 @@ const hideCheckoutNumber = () => {
 document.addEventListener('DOMContentLoaded', () => {
   fetchmeals();
   attachMealsLinkEvent();
+  attachCheckoutLinkEvent();
   hideCheckoutNumber();
 })
 
